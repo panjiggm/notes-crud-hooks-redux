@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
+import { connect } from "react-redux";
 import Notes from "./components/Notes";
 import Form from "./components/Form";
-import initialState from "./components/notesData";
+import {
+  createNote,
+  updateNote,
+  deleteNote
+} from "./store/actions/notesAction";
 
-function App() {
-  const [items, setItems] = useState(initialState);
+function App({ items, createNote, updateNote, deleteNote }) {
   const [mode, setMode] = useState("create");
   const [formItem, setFormItem] = useState({ title: "", note: "" });
 
@@ -21,17 +25,24 @@ function App() {
       note: note
     };
 
-    setItems([...items, newItems]);
+    createNote(newItems);
+
     setFormItem({ title: "", note: "" });
   };
 
   const handleUpdate = () => {
     const index = items.findIndex(item => item.id === formItem.id);
-    const updateItem = [...items];
+    let updateItem = [...items];
     updateItem[index] = formItem;
 
+    // const newItem = items.map((item, index) => {
+    //   return index === formItem.id ? formItem : item;
+    // });
+
+    // console.log(updateItem);
+
     setMode("create");
-    setItems(updateItem);
+    updateNote(updateItem);
     setFormItem({ title: "", note: "" });
   };
 
@@ -41,13 +52,11 @@ function App() {
   };
 
   const handleDelete = id => {
-    const newItems = items.filter(item => item.id !== id);
-
-    setItems(newItems);
+    deleteNote(id);
   };
 
   return (
-    <div className="App">
+    <Fragment>
       <h1 className="text-center">Notes App</h1>
       <Form
         mode={mode}
@@ -60,8 +69,16 @@ function App() {
       <br />
 
       <Notes items={items} onEdit={handleEdit} onDelete={handleDelete} />
-    </div>
+    </Fragment>
   );
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    items: state.notes
+  };
+};
+
+export default connect(mapStateToProps, { createNote, updateNote, deleteNote })(
+  App
+);
