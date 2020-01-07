@@ -35,12 +35,6 @@ function App({ items, createNote, updateNote, deleteNote }) {
     let updateItem = [...items];
     updateItem[index] = formItem;
 
-    // const newItem = items.map((item, index) => {
-    //   return index === formItem.id ? formItem : item;
-    // });
-
-    // console.log(updateItem);
-
     setMode("create");
     updateNote(updateItem);
     setFormItem({ title: "", note: "" });
